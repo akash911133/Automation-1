@@ -19,7 +19,6 @@ jobs:
           sudo apt-get install python3 -y
           sudo apt-get install jq -y
           sudo apt-get update -y
-          sudo apt-get install yq -y
 
       - name: Generate updatecli.yaml
         run: |
@@ -28,7 +27,7 @@ jobs:
 
       - name: Print updatecli.yaml file
         run: |
-          cat updatecli.yaml          
+          cat .github/updatecli.yaml          
 
       - name: Install updatecli
         run: |
@@ -43,7 +42,7 @@ jobs:
           cat Templates/EKS/inputs.tf  
 
       - name: Run updatecli
-        run: updatecli apply --config .github/pdatecli.yml          
+        run: updatecli apply --config .github/updatecli.yaml          
 
       - name: cat update cli version
         run: |
