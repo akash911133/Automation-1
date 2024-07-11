@@ -44,4 +44,4 @@ jobs:
 
       - name: cat update cli version
         run: |
-          cat Templates/EKS/inputs.tf   
+          cat Template/EKS/input.tf   
