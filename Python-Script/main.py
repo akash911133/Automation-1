@@ -7,8 +7,8 @@ data = {
       "kind": "helmchart",
       "pattern": "*",
       "spec": {
-        "name": "cluster-autoscaler",
-        "url": "https://kubernetes.github.io/autoscaler",
+        "name": "ingress-nginx",
+        "url": "https://kubernetes.github.io/ingress-nginx",
         "version": "latest"
       }
     }
@@ -19,7 +19,7 @@ data = {
       "kind": "terraform/file",
       "spec": {
         "file": "Terraform/EKS/input.tf",
-        "path": "variable.cluster-autoscaler.default"
+        "path": "variable.NGINX_CHART_VERSION.default"
       }
     }
   }
