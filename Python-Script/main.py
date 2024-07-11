@@ -18,7 +18,7 @@ data = {
       "name": "Update cluster-autoscaler version in input.tf",
       "kind": "terraform/file",
       "spec": {
-        "file": "Terraform/EKS/input.tf",
+        "file": "Template/EKS/input.tf",
         "path": "variable.NGINX_CHART_VERSION.default"
       }
     }
