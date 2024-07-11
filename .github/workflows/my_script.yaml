@@ -39,7 +39,7 @@ jobs:
         run: |
           updatecli version
           pwd
-          cat Templates/EKS/inputs.tf  
+          cat Template/EKS/inputs.tf  
 
       - name: Run updatecli
         run: updatecli apply --config .github/updatecli.yaml          
