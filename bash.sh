@@ -57,6 +57,9 @@ updatecli apply --config .github/updatecli.yaml
 #     #     sed -i '/"'$'"/{n;s/"SOURCE"/"'$chart_name_yaml'"/}' github/updatecli.yaml
 #     # fi
 #     # done
+sed -i '/"'akash'"/{n;s/"'NAME'"/"'akash'"/}' updatecli.yaml
 
+sed -i '/"'akash'"/{n;s/"NAME"/"'akash'"/}' updatecli.yaml
+sed -i {n;s/"URL"/"https://kubernetes.github.io/autoscaler"/} updatecli.yaml
 #     updatecli apply --config .github/updatecli.yaml
 # done
