@@ -40,7 +40,6 @@ jobs:
             tf_version_var_name=$(jq -r ".charts[$i].tf_version_var_name" $json_file)
             
             cat Template/EKS/input.tf 
-            cat .github
 
             python3 Python-Script/main.py $chart $repository $tf_version_var_name
 
