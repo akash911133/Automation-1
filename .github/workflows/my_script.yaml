@@ -27,6 +27,7 @@ jobs:
           mv updatecli /usr/local/bin
           updatecli version
 
+          
       - name: Generate updatecli.yaml
         run: |
           json_file=".github/chart.json"
