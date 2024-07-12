@@ -50,7 +50,7 @@ def main() -> None:
     
     # # Set the path for updatecli.yaml in the base repository directory
     DEFAULT_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)))
-    filename = os.path.join(DEFAULT_PATH, ".github/updatecli.yaml")
+    filename = os.path.join(DEFAULT_PATH, "../.github/updatecli.yaml")
 
     write_yaml(filename, TEMPLATEDATA)
     
