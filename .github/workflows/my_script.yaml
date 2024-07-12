@@ -3,7 +3,7 @@ name: Update Helm Charts
 on: 
   push:
     branches:
-      - main  # Specify the branches you want this workflow to run on push
+      - version  # Specify the branches you want this workflow to run on push
 
 jobs:
   update-helm-charts:
@@ -15,34 +15,78 @@ jobs:
       - name: Install Python
         # Ensure Python is installed (if not already available on the runner)
         run: |
-          apt-get update -y
-          apt-get install python3 -y
-          apt-get install jq -y
-          apt-get update -y
-          pip install pyyaml 
-
-      - name: Generate updatecli.yaml
-        run: |
-          output=$(python3 Python-Script/main.py)
-          echo "$output" 
-
-      - name: Print updatecli.yaml file
-        run: |
-          cat .github/updatecli.yaml          
+          sudo apt-get update -y
+          sudo apt-get install python3 -y
+          sudo apt-get install jq -y
+          sudo apt-get update -y
 
       - name: Install updatecli
         run: |
           curl -LO https://github.com/updatecli/updatecli/releases/download/v0.80.0/updatecli_Linux_x86_64.tar.gz
           tar -zxvf updatecli_Linux_x86_64.tar.gz
           mv updatecli /usr/local/bin
-
-      - name: check update cli version
-        run: |
           updatecli version
-          cat Template/EKS/input.tf  
-      - name: Run updatecli
-        run: updatecli apply --config .github/updatecli.yaml          
 
-      - name: cat update cli version
+      - name: Generate updatecli.yaml
         run: |
-          cat Template/EKS/input.tf   
+          json_file=".github/chart.json"
+          length=$(jq '.charts | length' $json_file)
+
+          for (( i=0; i<$length; i++ ))
+          do
+            # Extract chart, repository, and tf_version_var_name values
+            chart=$(jq -r ".charts[$i].chart" $json_file)
+            repository=$(jq -r ".charts[$i].repository" $json_file)
+            tf_version_var_name=$(jq -r ".charts[$i].tf_version_var_name" $json_file)
+            
+            cat Template/EKS/input.tf 
+            cat .github
+
+            python3 Python-Script/main.py $chart $repository $tf_version_var_name
+
+            cat .github/updatecli.yaml
+
+            updatecli apply --config .github/updatecli.yaml
+
+            cat Template/EKS/input.tf
+
+            echo "-----------------------------"
+
+            # Debug: Show input.tf after update
+            echo "input.tf after update:"
+            cat Terraform/input.tf
+
+            #Configure Git
+            git config --global user.name 'github-actions[bot]'
+            git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+            # Create a new branch for the update
+            git checkout -b "update-helm-version-$chart_name"
+
+            # Stage and commit changes
+            git add  Template/EKS/input.tf
+            git commit -m "Update Helm chart version for $chart to $latest_version"
+            git push origin HEAD:"update-helm-version-$chart"
+
+            # Extract the commit hash for the push
+            COMMIT_HASH=$(git rev-parse HEAD)
+
+            # Create a pull request using GitHub REST API
+            curl -ss -X POST \
+              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github.v3+json" \
+              https://api.github.com/repos/${{ github.repository }}/pulls \
+              -d '{
+                "title": "Update Helm chart version for '"$chart_name"'",
+                "body": "This PR updates Helm chart '"$chart"' version to '"$latest_version"'.",
+                "head": "update-helm-version-'$chart'",
+                "base": "version"
+              }'
+
+              # Reset the repository to the original state
+              git reset --hard origin/version
+    
+          done
+   
+
+
