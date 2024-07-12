@@ -45,11 +45,11 @@ jobs:
 
             python3 python-script/main.py $chart $repository $tf_version_var_name
 
-            cat .github/updatecli.yaml
+            # cat .github/updatecli.yaml
 
             updatecli apply --config .github/updatecli.yaml
             cd python-script
-            cat templates/eks/input.tf
+            # cat templates/eks/input.tf
             sudo apt-get install tree -y
             pwd
             ls -ltra
