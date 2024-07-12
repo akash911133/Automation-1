@@ -19,6 +19,7 @@ jobs:
           sudo apt-get install python3 -y
           sudo apt-get install jq -y
           sudo apt-get update -y
+          sudo pip install pyyaml -y
 
       - name: Generate updatecli.yaml
         run: |
