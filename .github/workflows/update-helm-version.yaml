@@ -19,7 +19,7 @@ jobs:
           sudo apt-get install python3 -y
           sudo apt-get install jq -y
           sudo apt-get update -y
-          pip install -r python_script/requirements.txt
+          pip install -r python-script/requirements.txt
 
       - name: Install updatecli
         run: |
