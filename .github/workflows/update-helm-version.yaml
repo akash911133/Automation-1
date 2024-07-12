@@ -48,12 +48,12 @@ jobs:
             cat .github/updatecli.yaml
 
             updatecli apply --config .github/updatecli.yaml
-
+            cd python-script
             cat templates/eks/input.tf
             sudo apt-get install tree -y
             pwd
             ls -ltra
-            cd python-script
+            # cd python-script
             one-path=$(pwd)
             echo "$(one-path)"
             sudo tree
