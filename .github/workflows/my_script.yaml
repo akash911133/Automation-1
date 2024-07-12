@@ -15,11 +15,11 @@ jobs:
       - name: Install Python
         # Ensure Python is installed (if not already available on the runner)
         run: |
-          sudo apt-get update -y
-          sudo apt-get install python3 -y
-          sudo apt-get install jq -y
-          sudo apt-get update -y
-          sudo pip install pyyaml 
+          apt-get update -y
+          apt-get install python3 -y
+          apt-get install jq -y
+          apt-get update -y
+          pip install pyyaml 
 
       - name: Generate updatecli.yaml
         run: |
