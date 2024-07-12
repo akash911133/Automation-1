@@ -57,7 +57,6 @@ jobs:
             one-path=$(pwd)
             echo "$(one-path)"
             sudo tree
-            cd python-script/
             python3 -m pytest -vs ../test/unit/python-workflows/helm-chart-version/test-helm-chart-version.py
             
             sudo rm -rf .github/updatecli.yaml
