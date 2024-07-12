@@ -1,5 +1,6 @@
 import yaml
 import sys
+import os
 
 def write_yaml(file, data):
     """Write YAML data to a file."""
@@ -37,20 +38,27 @@ def generate_updatecli_yaml(chart_name, chart_repository, variable_name):
     }
     return template_data
 
-if __name__ == "__main__":
-
+def main() -> None:
     CHART_NAME = sys.argv[1]
     CHART_REPOSITORY = sys.argv[2]
     VARIABLE_NAME = sys.argv[3]
     
+    # Write YAML data to file
     # Generate updatecli.yaml content
     TEMPLATEDATA = generate_updatecli_yaml(CHART_NAME, CHART_REPOSITORY, VARIABLE_NAME)
+
     
-    # Write YAML data to file
-    filename = ".github/updatecli.yaml"
+    # # Set the path for updatecli.yaml in the base repository directory
+    DEFAULT_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)))
+    filename = os.path.join(DEFAULT_PATH, ".github/updatecli.yaml")
+
     write_yaml(filename, TEMPLATEDATA)
     
-    print(f"Successfully generated {filename}")
+    # print(f"Successfully generated {filename}")
     print(f"Chart Name: {CHART_NAME}")
     print(f"Chart Repository: {CHART_REPOSITORY}")
     print(f"Variable Name: {VARIABLE_NAME}")
+
+
+if __name__ == "__main__":
+    main()
