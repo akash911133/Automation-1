@@ -2,7 +2,7 @@ import pytest
 import yaml
 import sys
 
-from main import write_yaml, generate_updatecli_yaml
+from python_script.main import write_yaml, generate_updatecli_yaml
 
 # Define mock data for testing
 mock_data = {

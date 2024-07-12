@@ -18,7 +18,7 @@ jobs:
           sudo apt-get install python3 -y
           sudo apt-get install jq -y
           sudo apt-get update -y
-          pip install -r python-script/requirements.txt
+          pip install -r python_script/requirements.txt
 
       - name: Install updatecli
         run: |
@@ -44,19 +44,23 @@ jobs:
             
             cat templates/eks/input.tf 
 
-            python3 python-script/main.py $chart $repository $tf_version_var_name
+            echo "Unit - testing of python code...."
+            python3 -m pytest -vs test/unit/python-workflows/helm-chart-version/test-helm-chart-version.py
 
+            #python script running
+            echo "Executing python script  ........"
+            python3 python_script/main.py $chart $repository $tf_version_var_name
+
+            # apply to updatecli file  
             updatecli apply --config .github/updatecli.yaml
 
-            cd python-script
-
-            python3 -m pytest -vs ../test/unit/python-workflows/helm-chart-version/test-helm-chart-version.py
+            # After updating input.tf and updatecli. yaml file 
+            cat templates/eks/input.tf 
+            cat .github/updatecli.yaml
             
-            cd ../
-
             sudo rm -rf .github/updatecli.yaml
 
-            echo "-----------------------------"
+            echo "-------------------------------------------------------------------------"
 
             #Configure Git
             git config --global user.name 'github-actions[bot]'

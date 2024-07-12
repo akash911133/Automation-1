@@ -37,3 +37,21 @@ and  tf_version_var_name is used for searching the variable name same as input.t
 
 # input.tf  -> 
  in input.tf file it 
+
+
+ #    github action  --> 
+written a github action that is taking input from chart.json file's variable value of chart, repositoy and tf_var_name in a loop. 
+ #  loop iterating  -->
+first executing unit testing of python code that is checking file is creating properly & whether data is generated .
+then -->
+these getting json file variable's value we passing through command line argument in python script 
+# python scrip  -->
+it is creating updatecli.yaml file according to perticular helm repo version update if found lates,
+----
+then updatecli.yaml apply
+then delete delete updatecli.yaml file -->
+then  created PR of input.tf file update .
+ # Then loop iterating and executing pytest ,  updatecli create, apply , delete and commit input.tf create PR . 
+ #
+ #
+ #
