@@ -51,10 +51,6 @@ jobs:
 
             echo "-----------------------------"
 
-            # Debug: Show input.tf after update
-            echo "input.tf after update:"
-            cat Terraform/input.tf
-
             #Configure Git
             git config --global user.name 'github-actions[bot]'
             git config --global user.email 'github-actions[bot]@users.noreply.github.com'
