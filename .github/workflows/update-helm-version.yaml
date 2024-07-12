@@ -13,7 +13,6 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install Python
-        # Ensure Python is installed (if not already available on the runner)
         run: |
           sudo apt-get update -y
           sudo apt-get install python3 -y
@@ -38,28 +37,24 @@ jobs:
           do
             # Extract chart, repository, and tf_version_var_name values
             chart=$(jq -r ".charts[$i].chart" $json_file)
+
             repository=$(jq -r ".charts[$i].repository" $json_file)
+
             tf_version_var_name=$(jq -r ".charts[$i].tf_version_var_name" $json_file)
             
             cat templates/eks/input.tf 
 
             python3 python-script/main.py $chart $repository $tf_version_var_name
 
-            # cat .github/updatecli.yaml
-
             updatecli apply --config .github/updatecli.yaml
+
             cd python-script
-            # cat templates/eks/input.tf
-            sudo apt-get install tree -y
-            pwd
-            ls -ltra
-            # cd python-script
-            # one-path=$(pwd)
-            # echo "$(one-path)"
-            # sudo tree
+
             python3 -m pytest -vs ../test/unit/python-workflows/helm-chart-version/test-helm-chart-version.py
             
-            # sudo rm -rf .github/updatecli.yaml
+            cd ../
+
+            sudo rm -rf .github/updatecli.yaml
 
             echo "-----------------------------"
 
@@ -90,9 +85,8 @@ jobs:
                 "base": "version"
               }'
 
-              # Reset the repository to the original state
-              git reset --hard origin/version
-    
+            # Reset the repository to the original state
+            git reset --hard origin/version
           done
    
 
