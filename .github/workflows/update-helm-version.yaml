@@ -50,11 +50,13 @@ jobs:
             updatecli apply --config .github/updatecli.yaml
 
             cat templates/eks/input.tf
-
+            sudo apt-get install tree -y
             pwd
             ll
+            
             one-path=$(pwd)
             echo "$(one-path)"
+            tree
             cd python-script/
             python3 -m pytest -vs ../test/unit/python-workflows/helm-chart-version/test-helm-chart-version.py
             
