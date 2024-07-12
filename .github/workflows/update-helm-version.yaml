@@ -19,6 +19,7 @@ jobs:
           sudo apt-get install python3 -y
           sudo apt-get install jq -y
           sudo apt-get update -y
+          pip install -r python_script/requirements.txt
 
       - name: Install updatecli
         run: |
@@ -40,15 +41,17 @@ jobs:
             repository=$(jq -r ".charts[$i].repository" $json_file)
             tf_version_var_name=$(jq -r ".charts[$i].tf_version_var_name" $json_file)
             
-            cat Template/EKS/input.tf 
+            cat templates/eks/input.tf 
 
-            python3 Python-Script/main.py $chart $repository $tf_version_var_name
+            python3 python-script/main.py $chart $repository $tf_version_var_name
 
             cat .github/updatecli.yaml
 
             updatecli apply --config .github/updatecli.yaml
 
-            cat Template/EKS/input.tf
+            cat templates/eks/input.tf
+            
+            sudo rm -rf .github/updatecli.yaml
 
             echo "-----------------------------"
 
@@ -60,7 +63,7 @@ jobs:
             git checkout -b "update-helm-version-$chart"
 
             # Stage and commit changes
-            git add  Template/EKS/input.tf
+            git add  templates/eks/input.tf
             git commit -m "Update Helm chart version $chart "
             git push origin HEAD:"update-helm-version-$chart"
 
