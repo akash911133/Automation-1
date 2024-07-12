@@ -17,7 +17,7 @@ variable "METRICS_SERVER_VERSION" {
 
 variable "EFS_DRIVER_CHART_VERSION" {
   type    = string
-  default = "2.2.9"
+  default = "3.0.6"
 }
 
 variable "AWS_LOAD_BALANCER_CONTROLLER_VERSION" {
