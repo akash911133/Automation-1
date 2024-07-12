@@ -52,7 +52,7 @@ jobs:
             cat templates/eks/input.tf
 
             pwd
-
+            ll
             one-path=$(pwd)
             echo "$(one-path)"
             cd python-script/
