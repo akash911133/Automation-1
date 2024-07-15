@@ -113,7 +113,7 @@ jobs:
             STATUS_MESSAGE="GitHub Actions job '${JOB_NAME}' succeeded 🎉"
           else
             STATUS_MESSAGE="GitHub Actions job '${JOB_NAME}' failed  ❌\n  "
-            STATUS_MESSAGE="GitHub Actions Failed Please Check failed ❌ at step '${JOB_URL}'"
+            STATUS_MESSAGE="Failed Please Check failed ❌ at step\n '${JOB_URL}'"
           fi
           # Include the job run URL and failed step in the Slack message
           MESSAGE_WITH_LINK="{\"text\":\"${STATUS_MESSAGE}\\nJob Run Details: <${JOB_URL}|View Job>\"}"
