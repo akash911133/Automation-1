@@ -52,46 +52,51 @@ on:
 
 #           curl -X POST -H 'Content-type: application/json' --data '{"text":"'"${STATUS_MESSAGE}"'"}' $SLACK_WEBHOOK_URL
       
+
 jobs:
-  Update-Helm-Charts:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Update Helm Charts
-        id: update-charts
-        run: |
-          echo "Updating Helm Charts..."
-          # Replace this with your actual update steps
-          # Simulating a failure for demonstration
-          if [ "$RANDOM" -gt 20000 ]; then
-            echo "Simulating a failure"
-            exit 1
-          fi
-        continue-on-error: true
-
-      - name: Set Job Status
-        id: job-status
-        run: |
-          echo "::set-output name=status::${{ job.status }}"
-          echo "::set-output name=name::Update-Helm-Charts"
-
-  notify:
-    runs-on: ubuntu-latest
-    needs: Update-Helm-Charts
-    steps:
-      - name: Send Slack Notification
-        if: always()
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        run: |
-          JOB_STATUS=${{ needs.Update-Helm-Charts.outputs.status }}
-          JOB_NAME=${{ needs.Update-Helm-Charts.outputs.name }}
-          if [ "$JOB_STATUS" == "success" ]; then
-            STATUS_MESSAGE="GitHub Actions job '$JOB_NAME' succeeded 🎉"
-          else
-            STATUS_MESSAGE="GitHub Actions job '$JOB_NAME' failed ❌"
-          fi
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"'"$STATUS_MESSAGE"'"}' $SLACK_WEBHOOK_URL
+    Update-Helm-Charts:
+      runs-on: ubuntu-latest
+  
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+  
+        - name: Update Helm Charts
+          id: update-charts
+          run: |
+            echo "Updating Helm Charts..."
+            # Replace this with your actual update steps
+            # Simulating a failure for demonstration
+            if [ "$RANDOM" -gt 20000 ]; then
+              echo "Simulating a failure"
+              exit 1
+            fi
+          continue-on-error: true
+  
+        - name: Set Job Status
+          id: set-status
+          run: |
+            if [ "${{ steps.update-charts.outcome }}" == "success" ]; then
+              echo "::set-output name=status::success"
+            else
+              echo "::set-output name=status::failure"
+            fi
+            echo "::set-output name=name::Update-Helm-Charts"
+  
+    notify:
+      runs-on: ubuntu-latest
+      needs: Update-Helm-Charts
+      steps:
+        - name: Send Slack Notification
+          if: always()
+          env:
+            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+            JOB_STATUS: ${{ needs.Update-Helm-Charts.outputs.status }}
+            JOB_NAME: ${{ needs.Update-Helm-Charts.outputs.name }}
+          run: |
+            if [ "${JOB_STATUS}" == "success" ]; then
+              STATUS_MESSAGE="GitHub Actions job '${JOB_NAME}' succeeded 🎉"
+            else
+              STATUS_MESSAGE="GitHub Actions job '${JOB_NAME}' failed ❌"
+            fi
+            curl -X POST -H 'Content-type: application/json' --data '{"text":"'"${STATUS_MESSAGE}"'"}' $SLACK_WEBHOOK_URL
