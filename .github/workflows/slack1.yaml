@@ -1,0 +1,49 @@
+name: Slack Notification
+
+on:
+  push:
+    branches:
+      - version  # Replace with your branch name
+  pull_request:
+    branches:
+      - version  # Replace with your branch name
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run your job
+        run: |
+          echo "Running some tests..."
+          # Replace this with your actual job steps
+          # Simulating a failure for demonstration
+          if [ "$RANDOM" -gt 20000 ]; then
+            echo "Simulating a failure"
+            exit 1
+          fi
+
+      - name: Set Job Status
+        id: job-status
+        run: echo "job_status=${{ job.status }}" >> $GITHUB_ENV
+
+  notify:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack Notification
+        if: always()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          JOB_STATUS: ${{ env.job_status }}
+        run: |
+          if [ "${{ env.JOB_STATUS }}" == "success" ]; then
+            STATUS_MESSAGE="GitHub Actions job succeeded 🎉"
+          else
+            STATUS_MESSAGE="GitHub Actions job failed ❌"
+          fi
+
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"'"${STATUS_MESSAGE}"'"}' $SLACK_WEBHOOK_URL
