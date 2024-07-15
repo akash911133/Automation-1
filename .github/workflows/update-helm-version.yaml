@@ -101,13 +101,35 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           JOB_STATUS: ${{ needs.update-helm-charts.result }}
           JOB_NAME: "Update-Helm-Charts"
+          JOB_URL: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
         run: |
           if [ "${JOB_STATUS}" == "success" ]; then
             STATUS_MESSAGE="GitHub Actions job '${JOB_NAME}' succeeded 🎉"
           else
             STATUS_MESSAGE="GitHub Actions job '${JOB_NAME}' failed ❌"
           fi
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"'"${STATUS_MESSAGE}"'"}' $SLACK_WEBHOOK_URL
+          # Include the job run URL in the Slack message
+          MESSAGE_WITH_LINK="{\"text\":\"${STATUS_MESSAGE}\\nJob Run Details: <${JOB_URL}|View Job>\"}"
+          curl -X POST -H 'Content-type: application/json' --data "${MESSAGE_WITH_LINK}" $SLACK_WEBHOOK_URL
+
+#############   FINE FOR UPDATING SEND THE NOTIFICATION   #############
+  # notify:
+  #   runs-on: ubuntu-latest
+  #   needs: update-helm-charts
+  #   if: always()
+  #   steps:
+  #     - name: Send Slack Notification
+  #       env:
+  #         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  #         JOB_STATUS: ${{ needs.update-helm-charts.result }}
+  #         JOB_NAME: "Update-Helm-Charts"
+  #       run: |
+  #         if [ "${JOB_STATUS}" == "success" ]; then
+  #           STATUS_MESSAGE="GitHub Actions job '${JOB_NAME}' succeeded 🎉"
+  #         else
+  #           STATUS_MESSAGE="GitHub Actions job '${JOB_NAME}' failed ❌"
+  #         fi
+  #         curl -X POST -H 'Content-type: application/json' --data '{"text":"'"${STATUS_MESSAGE}"'"}' $SLACK_WEBHOOK_URL
 
 ##############    Actual code  #########################################
 
