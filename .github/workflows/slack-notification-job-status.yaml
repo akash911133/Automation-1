@@ -1,39 +1,39 @@
-name: Slack Notification
+# name: Slack Notification
 
-on:
-  push:
-    branches:
-      - version  # Replace with your branch name
-  pull_request:
-    branches:
-      - version  # Replace with your branch name
-  workflow_run:
-    workflows: ["Update Helm Chart "]  # Replace with your workflow name
-    types:
-      - completed
+# on:
+#   push:
+#     branches:
+#       - version  # Replace with your branch name
+#   pull_request:
+#     branches:
+#       - version  # Replace with your branch name
+#   workflow_run:
+#     workflows: ["Update Helm Chart "]  # Replace with your workflow name
+#     types:
+#       - completed
 
-jobs:
-  slack_notification:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.event == 'completed' }}
+# jobs:
+#   slack_notification:
+#     runs-on: ubuntu-latest
+#     if: ${{ github.event.workflow_run.event == 'completed' }}
 
-    steps:
-      - name: Check Job Outcome
-        id: job-status
-        run: echo "Job ${{ job.status }}"
+#     steps:
+#       - name: Check Job Outcome
+#         id: job-status
+#         run: echo "Job ${{ job.status }}"
 
-      - name: Send Slack Notification on Success
-        if: steps.job-status.outputs.job == 'success'
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-        with:
-          payload: '{"text": "GitHub Actions job succeeded 🎉"}'
+#       - name: Send Slack Notification on Success
+#         if: steps.job-status.outputs.job == 'success'
+#         uses: rtCamp/action-slack-notify@v2
+#         env:
+#           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+#         with:
+#           payload: '{"text": "GitHub Actions job succeeded 🎉"}'
 
-      - name: Send Slack Notification on Failure
-        if: steps.job-status.outputs.job != 'success'
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-        with:
-          payload: '{"text": "GitHub Actions job failed ❌"}'
+#       - name: Send Slack Notification on Failure
+#         if: steps.job-status.outputs.job != 'success'
+#         uses: rtCamp/action-slack-notify@v2
+#         env:
+#           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+#         with:
+#           payload: '{"text": "GitHub Actions job failed ❌"}'

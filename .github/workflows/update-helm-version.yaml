@@ -3,7 +3,7 @@ name: Update-Helm-Charts
 on: 
   push:
     branches:
-      - version  # Specify the branches you want this workflow to run on push
+      - version  
 
 jobs:
   update-helm-charts:
@@ -27,7 +27,6 @@ jobs:
           mv updatecli /usr/local/bin
           updatecli version
 
-
       - name: Generate updatecli.yaml
         run: |
           json_file=".github/chart.json"
@@ -37,9 +36,7 @@ jobs:
           do
             # Extract chart, repository, and tf_version_var_name values
             chart=$(jq -r ".charts[$i].chart" $json_file)
-
             repository=$(jq -r ".charts[$i].repository" $json_file)
-
             tf_version_var_name=$(jq -r ".charts[$i].tf_version_var_name" $json_file)
             
             cat templates/eks/input.tf 
@@ -92,7 +89,16 @@ jobs:
             # Reset the repository to the original state
             git reset --hard origin/version
           done
-   
+
+      - name: Set Job Status
+        id: set-status
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "::set-output name=status::success"
+          else
+            echo "::set-output name=status::failure"
+          fi
+          echo "::set-output name=name::Update-Helm-Charts"
 
   notify:
     runs-on: ubuntu-latest
@@ -111,3 +117,102 @@ jobs:
             STATUS_MESSAGE="GitHub Actions job '${JOB_NAME}' failed ❌"
           fi
           curl -X POST -H 'Content-type: application/json' --data '{"text":"'"${STATUS_MESSAGE}"'"}' $SLACK_WEBHOOK_URL
+
+
+##############    Actual code  #########################################
+
+# name: Update-Helm-Charts
+
+# on: 
+#   push:
+#     branches:
+#       - version  
+
+# jobs:
+#   update-helm-charts:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v2
+
+#       - name: Install Python
+#         run: |
+#           sudo apt-get update -y
+#           sudo apt-get install python3 -y
+#           sudo apt-get install jq -y
+#           sudo apt-get update -y
+#           pip install -r python_script/requirements.txt
+
+#       - name: Install updatecli
+#         run: |
+#           curl -LO https://github.com/updatecli/updatecli/releases/download/v0.80.0/updatecli_Linux_x86_64.tar.gz
+#           tar -zxvf updatecli_Linux_x86_64.tar.gz
+#           mv updatecli /usr/local/bin
+#           updatecli version
+
+
+#       - name: Generate updatecli.yaml
+#         run: |
+#           json_file=".github/chart.json"
+#           length=$(jq '.charts | length' $json_file)
+
+#           for (( i=0; i<$length; i++ ))
+#           do
+#             # Extract chart, repository, and tf_version_var_name values
+#             chart=$(jq -r ".charts[$i].chart" $json_file)
+
+#             repository=$(jq -r ".charts[$i].repository" $json_file)
+
+#             tf_version_var_name=$(jq -r ".charts[$i].tf_version_var_name" $json_file)
+            
+#             cat templates/eks/input.tf 
+
+#             echo "Unit - testing of python code...."
+#             python3 -m pytest -vs test/unit/python-workflows/helm-chart-version/test-helm-chart-version.py
+
+#             #python script running
+#             echo "Executing python script  ........"
+#             python3 python_script/main.py $chart $repository $tf_version_var_name
+
+#             # apply to updatecli file  
+#             updatecli apply --config .github/updatecli.yaml
+
+#             # After updating input.tf and updatecli. yaml file 
+#             cat templates/eks/input.tf 
+#             cat .github/updatecli.yaml
+            
+#             sudo rm -rf .github/updatecli.yaml
+
+#             echo "-------------------------------------------------------------------------"
+
+#             #Configure Git
+#             git config --global user.name 'github-actions[bot]'
+#             git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+#             # Create a new branch for the update
+#             git checkout -b "update-helm-version-$chart"
+
+#             # Stage and commit changes
+#             git add  templates/eks/input.tf
+#             git commit -m "Update Helm chart version $chart "
+#             git push origin HEAD:"update-helm-version-$chart"
+
+#             # Extract the commit hash for the push
+#             COMMIT_HASH=$(git rev-parse HEAD)
+
+#             # Create a pull request using GitHub REST API
+#             curl -s  -X POST \
+#               -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+#               -H "Accept: application/vnd.github.v3+json" \
+#               https://api.github.com/repos/${{ github.repository }}/pulls \
+#               -d '{
+#                 "title": "Update Helm chart version for '"$chart"'",
+#                 "body": "This PR updates Helm chart '"$chart"' version to '"$latest_version"'.",
+#                 "head": "update-helm-version-'$chart'",
+#                 "base": "version"
+#               }'
+
+#             # Reset the repository to the original state
+#             git reset --hard origin/version
+#           done
+   
