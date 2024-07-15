@@ -107,7 +107,6 @@ jobs:
           JOB_STATUS: ${{ needs.update-helm-charts.result }}
           JOB_NAME: "Update-Helm-Charts"
           JOB_URL: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          FAILED_STEP: ${{ needs.update-helm-charts.Stage.outputs }}
         run: |
           if [ "${JOB_STATUS}" == "success" ]; then
             STATUS_MESSAGE="GitHub Actions job '${JOB_NAME}' succeeded 🎉"
