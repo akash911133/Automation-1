@@ -94,4 +94,20 @@ jobs:
           done
    
 
-
+  notify:
+    runs-on: ubuntu-latest
+    needs: update-helm-charts
+    steps:
+      - name: Send Slack Notification
+        if: always()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          JOB_STATUS: ${{ needs.update-helm-charts.outputs.status }}
+          JOB_NAME: ${{ needs.update-helm-charts.outputs.name }}
+        run: |
+          if [ "${JOB_STATUS}" == "success" ]; then
+            STATUS_MESSAGE="GitHub Actions job '${JOB_NAME}' succeeded 🎉"
+          else
+            STATUS_MESSAGE="GitHub Actions job '${JOB_NAME}' failed ❌"
+          fi
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"'"${STATUS_MESSAGE}"'"}' $SLACK_WEBHOOK_URL
