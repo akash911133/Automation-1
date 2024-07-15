@@ -91,6 +91,11 @@ jobs:
             git reset --hard origin/version
           done
 
+      - name: Log Step Name on Failure
+        id: log-step-name
+        if: failure()
+        run: echo "::set-output name=step_name::${{ github.job }}"
+
   notify:
     runs-on: ubuntu-latest
     needs: update-helm-charts
@@ -102,15 +107,17 @@ jobs:
           JOB_STATUS: ${{ needs.update-helm-charts.result }}
           JOB_NAME: "Update-Helm-Charts"
           JOB_URL: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          FAILED_STEP: ${{ needs.update-helm-charts.outputs.step_name }}
         run: |
           if [ "${JOB_STATUS}" == "success" ]; then
             STATUS_MESSAGE="GitHub Actions job '${JOB_NAME}' succeeded 🎉"
           else
-            STATUS_MESSAGE="GitHub Actions job '${JOB_NAME}' failed ❌"
+            STATUS_MESSAGE="GitHub Actions job '${JOB_NAME}' failed ❌ at step '${FAILED_STEP}'"
           fi
-          # Include the job run URL in the Slack message
+          # Include the job run URL and failed step in the Slack message
           MESSAGE_WITH_LINK="{\"text\":\"${STATUS_MESSAGE}\\nJob Run Details: <${JOB_URL}|View Job>\"}"
           curl -X POST -H 'Content-type: application/json' --data "${MESSAGE_WITH_LINK}" $SLACK_WEBHOOK_URL
+
 
 #############   FINE FOR UPDATING SEND THE NOTIFICATION   #############
   # notify:
