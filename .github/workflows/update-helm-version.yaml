@@ -1,4 +1,4 @@
-name: Update Helm Charts
+name: Update-Helm-Charts
 
 on: 
   push:
