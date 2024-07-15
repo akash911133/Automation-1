@@ -107,12 +107,14 @@ jobs:
           JOB_STATUS: ${{ needs.update-helm-charts.result }}
           JOB_NAME: "Update-Helm-Charts"
           JOB_URL: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          FAILED_STEP: ${{ needs.update-helm-charts.outputs }}
+          FAILED_STEP: ${{ needs.update-helm-charts.Stage.outputs }}
         run: |
           if [ "${JOB_STATUS}" == "success" ]; then
             STATUS_MESSAGE="GitHub Actions job '${JOB_NAME}' succeeded 🎉"
+            STATUS_MESSAGE="GitHub Actions job '${JOB_NAME}' succeeded 🎉"
           else
-            STATUS_MESSAGE="GitHub Actions job '${JOB_NAME}' failed ❌ at step '${FAILED_STEP}'"
+            STATUS_MESSAGE="GitHub Actions job '${JOB_NAME}' failed  ❌\n  "
+            STATUS_MESSAGE="GitHub Actions Failed Please Check failed ❌ at step '${JOB_URL}'"
           fi
           # Include the job run URL and failed step in the Slack message
           MESSAGE_WITH_LINK="{\"text\":\"${STATUS_MESSAGE}\\nJob Run Details: <${JOB_URL}|View Job>\"}"
