@@ -9,31 +9,10 @@ jobs:
   RunPythonScript:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repositoryname Update Helm Charts
-
-on: 
-  push:
-    branches:
-      - main  # Specify the branches you want this workflow to run on push
-
-jobs:
-  update-helm-charts:
-    runs-on: ubuntu-latest
-    steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Install Python
-        # Ensure Python is installed (if not already available on the runner)
-        run: |
-          apt-get update -y
-          apt-get install python3 -y
-          apt-get install jq -y
-          apt-get update -y
-          pip install pyyaml 
-        uses: actions/checkout@v2
-
-      - name: Install Python
+      - program: Install Python
         # Ensure Python is installed (if not already available on the runner)
         run: |
           apt-get update -y
