@@ -9,7 +9,7 @@ jobs:
   RunPythonScript:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repositoryname: Update Helm Charts
+      - name: Checkout repositoryname Update Helm Charts
 
 on: 
   push:
