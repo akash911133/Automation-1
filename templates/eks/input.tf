@@ -2,7 +2,7 @@
 
 variable "CLUSTER_AUTOSCALER_HELM_CHART_VERSION" {
   type    = string
-  default = "9.21.0"
+  default = "9.37.0"
 }
 
 variable "NGINX_CHART_VERSION" {
