@@ -22,7 +22,7 @@ variable "EFS_DRIVER_CHART_VERSION" {
 
 variable "AWS_LOAD_BALANCER_CONTROLLER_VERSION" {
   type    = string
-  default = "1.5.5"
+  default = "1.8.1"
 }
 
 variable "CERTMANAGER_VERSION" {
