@@ -7,7 +7,7 @@ variable "CLUSTER_AUTOSCALER_HELM_CHART_VERSION" {
 
 variable "NGINX_CHART_VERSION" {
   type    = string
-  default = "4.3.0"
+  default = "4.11.0"
 }
 
 variable "METRICS_SERVER_VERSION" {
